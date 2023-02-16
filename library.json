@@ -1,6 +1,6 @@
 {
     "name": "ESP8266SAM_ES",
-    "description": "Speech synthesizer SAM ported to ESP8266/ESP32/RP2040",
+    "description": "Speech synthesizer SAM ported to ESP8266/ESP32/RP2040 in spanish",
     "keywords": "ESP8266, ESP32, RP2040, Spanish, Speech, Synthesis, SAM",
     "authors": [
         {
