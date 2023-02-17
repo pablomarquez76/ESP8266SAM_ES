@@ -13,8 +13,8 @@ void setup()
 void loop()
 {
   ESP8266SAM *sam = new ESP8266SAM;
-  sam->Say(out, "Can you hear me now?");
+  sam->Say(out, "Puedes oirme?");
   delay(500);
-  sam->Say(out, "I can't hear you!");
+  sam->Say(out, "Sí, por supuesto!");
   delete sam;
 }
