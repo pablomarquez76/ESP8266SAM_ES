@@ -25,6 +25,8 @@ Output is fixed at 22050Hz due to some hardcoded delays to help match C64 intern
 
 The voice is formant generated and can be modified by setting things such as speed, pitch, mouth and throat configuration, and even sending in phonetic codes instead of English text.  See @s-macke's repository for more information.
 
+The pronunciation may be changed to match the spanish from Spain, Argentina or other forms by uncommenting some lines in the function textoAFonemas() in reciter.h.
+
 ## Cool uses of SAM
 Jan Derogee has used ESP8266SAM to build a complete VIC-20 compatible speech synthesis cartridge that works with BASIC applications.  It also has a great background on early speech synthesis and a neat construction and demo video.  Check it out at https://janderogee.com/projects/SerialSpeechSynthesisSAM/SerialSpeechSynthesisSAM.htm
 
