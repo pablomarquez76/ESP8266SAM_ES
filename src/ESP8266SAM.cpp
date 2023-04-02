@@ -14,6 +14,8 @@
   GNU General Public License for more details.
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  
+  added: Regional accents
 */
 
 
@@ -42,17 +44,17 @@ void ESP8266SAM::OutputByte(unsigned char b)
   sample[1] = s16;
   while (!output->ConsumeSample(sample)) yield();
 }
-  
+
 bool ESP8266SAM::Say(AudioOutput *out, const char *str)
 {
-  if (!str || strlen(str)>254) return false; // Only can speak up to 1 page worth of data...
+  if (!str || strlen(str) > 254) return false; // Only can speak up to 1 page worth of data...
   samdata = new SamData;
   if (samdata == nullptr)
   {
-      // allocation failed!
-      return false;
+    // allocation failed!
+    return false;
   }
-  
+
   // These are fixed by the synthesis routines
   out->SetRate(22050);
   out->SetBitsPerSample(8);
@@ -65,21 +67,21 @@ bool ESP8266SAM::Say(AudioOutput *out, const char *str)
   if (pitch) ::SetPitch(pitch);
   if (mouth) ::SetMouth(mouth);
   if (throat) ::SetThroat(throat);
-  
+
   char input[256];
   if (phonetic) {
-	  for (int i=0; str[i]; i++)
-		input[i] = toupper((int)str[i]);
-	  input[strlen(str)] = 0;	  
+    for (int i = 0; str[i]; i++)
+      input[i] = toupper((int)str[i]);
+    input[strlen(str)] = 0;
   } else {
-	  char texto[60];
-	  for (int i = 0; str[i]; i++)
-		texto[i] = str[i];
-	  texto[strlen(str)] = 0;	  
-	  textoAFonemas(texto, input);
+    char texto[60];
+    for (int i = 0; str[i]; i++)
+      texto[i] = str[i];
+    texto[strlen(str)] = 0;
+    textoAFonemas(texto, input);
   }
   strncat(input, "\x9b", 255);
-  
+
   // Say it!
   output = out;
   SetInput(input);
@@ -101,3 +103,12 @@ void ESP8266SAM::SetVoice(enum SAMVoice voice)
   }
 }
 
+void ESP8266SAM::SetRegion(enum SAMRegion region)
+{
+  switch (region) {
+    case REGION_AR: regionN = 0; break;
+    case REGION_ES: regionN = 1; break;
+    default:
+    case REGION_OT: regionN = 2; break;
+  }
+}
