@@ -1,7 +1,7 @@
 /*
   ESP8266SAM_ES
   Port of SAM to the ESP8266 in spanish
-  
+
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
@@ -15,6 +15,7 @@
 */
 
 #define MAX_LONG 20
+byte regionN = 0; // regionN: 0 AR (Argentina y Uruguay)  1 ES (España) 2 OT (Otros)
 
 boolean esVocal(char cr) {
   if (cr == 'A' ||
@@ -204,9 +205,12 @@ void textoAFonemas(char* txt, char* fonema) {
 
       case 'L':
         if (c1 == 'L' ) {
-          fonema[ind_fon++] = 'S'; // argentina
-          fonema[ind_fon++] = 'H'; // argentina
-		  //fonema[ind_fon++] = 'Y'; // otros
+          if (regionN == 0) {
+            fonema[ind_fon++] = 'S'; // argentina
+            fonema[ind_fon++] = 'H'; // argentina
+          } else {
+            fonema[ind_fon++] = 'Y'; // otros
+          }
           ind_txt++;
         } else if (c1 == 'R') {
           fonema[ind_fon++] = 'L';
@@ -220,9 +224,12 @@ void textoAFonemas(char* txt, char* fonema) {
         if (c1 == 'E' ||
             c1 == 'I' ||
             (c1 == 195 && tildeEI(c2))) {
-          fonema[ind_fon++] = 'S'; // otros
-		  //fonema[ind_fon++] = 'T'; // españa
-		  //fonema[ind_fon++] = 'H'; // españa
+          if (regionN == 1) {
+            fonema[ind_fon++] = 'T'; // españa
+            fonema[ind_fon++] = 'H'; // españa
+          } else {
+            fonema[ind_fon++] = 'S'; // otros
+          }
         } else if (c1 == 'H') {
           fonema[ind_fon++] = 'C';
           fonema[ind_fon++] = 'H';
@@ -283,9 +290,12 @@ void textoAFonemas(char* txt, char* fonema) {
 
       case 'Y':
         if (esVocal(c1)) {
-          fonema[ind_fon++] = 'S'; // argentina
-          fonema[ind_fon++] = 'H'; // argentina
-		  //fonema[ind_fon++] = 'Y'; // otros
+          if (regionN == 0) {
+            fonema[ind_fon++] = 'S'; // argentina
+            fonema[ind_fon++] = 'H'; // argentina
+          } else {
+            fonema[ind_fon++] = 'Y'; // otros
+          }
         } else {
           fonema[ind_fon++] = 'I';
           fonema[ind_fon++] = 'Y';
@@ -312,9 +322,12 @@ void textoAFonemas(char* txt, char* fonema) {
         break;
 
       case 'Z':
+        if (regionN == 1) {
+          fonema[ind_fon++] = 'T'; // españa
+          fonema[ind_fon++] = 'H'; // españa
+        } else {
           fonema[ind_fon++] = 'S'; // otros
-		  //fonema[ind_fon++] = 'T'; // españa
-		  //fonema[ind_fon++] = 'H'; // españa
+        }
         break;
 
       case 'J':
@@ -378,12 +391,17 @@ void textoAFonemas(char* txt, char* fonema) {
         break;
 
       case 0:
-        fonema[ind_fon++] = 0;        
+        fonema[ind_fon++] = 0;
         return;
         break;
 
       case '0':
-        fonema[ind_fon++] = 'S';
+        if (regionN == 1) {
+          fonema[ind_fon++] = 'T'; // españa
+          fonema[ind_fon++] = 'H'; // españa
+        } else {
+          fonema[ind_fon++] = 'S'; // otros
+        }
         fonema[ind_fon++] = 'E';
         fonema[ind_fon++] = 'H';
         fonema[ind_fon++] = '4';
@@ -440,7 +458,12 @@ void textoAFonemas(char* txt, char* fonema) {
         break;
 
       case '5':
-        fonema[ind_fon++] = 'S';
+        if (regionN == 1) {
+          fonema[ind_fon++] = 'T'; // españa
+          fonema[ind_fon++] = 'H'; // españa
+        } else {
+          fonema[ind_fon++] = 'S'; // otros
+        }
         fonema[ind_fon++] = 'I';
         fonema[ind_fon++] = 'Y';
         fonema[ind_fon++] = '4';
@@ -501,5 +524,5 @@ void textoAFonemas(char* txt, char* fonema) {
         break;
     }
     if (ind_txt == ind_acento) fonema[ind_fon++] = '4';
-  } 
+  }
 }
