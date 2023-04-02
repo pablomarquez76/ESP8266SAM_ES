@@ -13,6 +13,8 @@
   GNU General Public License for more details.
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  
+  added: Regional accents 
 */
 
 #ifndef _ESP8266SAM_H
@@ -40,7 +42,9 @@ public:
   }
 
   enum SAMVoice { VOICE_SAM, VOICE_ELF, VOICE_ROBOT, VOICE_STUFFY, VOICE_OLDLADY, VOICE_ET };
+  enum SAMRegion { REGION_AR, REGION_ES, REGION_OT };
   void SetVoice(enum SAMVoice voice);
+  void SetRegion(enum SAMRegion region);
 
   void SetSingMode(bool val) { singmode = val; }
   void SetPhonetic(bool val) { phonetic = val; }
@@ -64,4 +68,3 @@ private:
 };
 
 #endif
-
