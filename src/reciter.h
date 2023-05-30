@@ -108,6 +108,7 @@ int indiceAcento(char* palabra, int len) {
       return indiceUltVoc(palabra, len);
     }
   }
+  return -1;
 }
 
 void textoAFonemas(char* txt, char* fonema) {
