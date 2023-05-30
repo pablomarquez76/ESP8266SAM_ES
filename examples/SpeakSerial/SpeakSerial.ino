@@ -10,7 +10,7 @@ int punt_linea = 0;
 
 void setup() {
   Serial.begin(115200);
-  out = new AudioOutputI2S(0, 1); // to use the internal DAC channel 1 (pin25) on ESP32
+  out = new AudioOutputI2S(0, 1);  // to use the internal DAC channel 1 (pin25) on ESP32
   out->begin();
 }
 
@@ -36,22 +36,23 @@ void loop() {
       Serial.println(linea);
 
       ESP8266SAM *sam = new ESP8266SAM;
-      if (linea[0] == '-') sam->SetPhonetic(true);
-      else if (linea[0] == '+') { // SetVoice
-        if (linea[1] == '0')  sam->SetVoice(sam->SAMVoice::VOICE_SAM);
-        else if (linea[1] == '1')  sam->SetVoice(sam->SAMVoice::VOICE_ELF);
-        else if (linea[1] == '2')  sam->SetVoice(sam->SAMVoice::VOICE_ROBOT);
-        else if (linea[1] == '3')  sam->SetVoice(sam->SAMVoice::VOICE_STUFFY);
-        else if (linea[1] == '4')  sam->SetVoice(sam->SAMVoice::VOICE_OLDLADY);
-        else if (linea[1] == '5')  sam->SetVoice(sam->SAMVoice::VOICE_ET);
-        else if (linea[1] == 'a')  sam->SetRegion(sam->SAMRegion::REGION_AR);
-        else if (linea[1] == 'e')  sam->SetRegion(sam->SAMRegion::REGION_ES);
-        else if (linea[1] == 'o')  sam->SetRegion(sam->SAMRegion::REGION_OT);
+      sam->SetPhonetic(false);
+      if (linea[0] == '-') {
+        sam->SetPhonetic(true);
+        linea[0] = ' ';
+      } else if (linea[0] == '+') {  // SetVoice
+        if (linea[1] == '0') sam->SetVoice(sam->SAMVoice::VOICE_SAM);
+        else if (linea[1] == '1') sam->SetVoice(sam->SAMVoice::VOICE_ELF);
+        else if (linea[1] == '2') sam->SetVoice(sam->SAMVoice::VOICE_ROBOT);
+        else if (linea[1] == '3') sam->SetVoice(sam->SAMVoice::VOICE_STUFFY);
+        else if (linea[1] == '4') sam->SetVoice(sam->SAMVoice::VOICE_OLDLADY);
+        else if (linea[1] == '5') sam->SetVoice(sam->SAMVoice::VOICE_ET);
+        else if (linea[1] == 'a') sam->SetRegion(sam->SAMRegion::REGION_AR);
+        else if (linea[1] == 'e') sam->SetRegion(sam->SAMRegion::REGION_ES);
+        else if (linea[1] == 'o') sam->SetRegion(sam->SAMRegion::REGION_OT);
         linea[0] = ' ';
         linea[1] = ' ';
-        sam->SetPhonetic(false);
       }
-      else sam->SetPhonetic(false);
       sam->Say(out, linea);
       delete sam;
 
@@ -74,13 +75,7 @@ void loop() {
 }
 
 boolean esPuntuacion2(char cr) {
-  if (cr == ' ' ||
-      cr == '-' ||
-      cr == ',' ||
-      cr == ';' ||
-      cr == '.' ||
-      cr == '?' ||
-      cr == '!')
+  if (cr == ' ' || cr == '-' || cr == ',' || cr == ';' || cr == '.' || cr == '?' || cr == '!')
     return true;
   return false;
 }
