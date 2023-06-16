@@ -32,10 +32,15 @@ Jan Derogee has used ESP8266SAM to build a complete VIC-20 compatible speech syn
 
 ## Troubleshoot
 When compiling the library using Arduino 2.0 or later a conflict with SD library may show up. This may be solved by changing the value of variable "name" in file: 
+
 C:\Users\<yourUser>\AppData\Local\Arduino15\packages\esp32\hardware\esp32\1.0.6\libraries\SD\library.properties
+
 from this:
+
 name=SD(esp32)
+
 to this:
+
 name=SD
 
 ## License
