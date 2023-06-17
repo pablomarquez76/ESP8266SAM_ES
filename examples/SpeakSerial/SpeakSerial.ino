@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <ESP8266SAM.h>
+#include <ESP8266SAM_ES.h>
 #include <AudioOutputI2S.h>
 
 AudioOutputI2S *out = NULL;
@@ -35,7 +35,7 @@ void loop() {
       }
       Serial.println(linea);
 
-      ESP8266SAM *sam = new ESP8266SAM;
+      ESP8266SAM_ES *sam = new ESP8266SAM_ES;
       sam->SetPhonetic(false);
       if (linea[0] == '-') {
         sam->SetPhonetic(true);
