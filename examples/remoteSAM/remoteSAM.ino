@@ -13,7 +13,7 @@ void loop() {
 }
 #else
 
-#include <ESP8266SAM.h>
+#include <ESP8266SAM_ES.h>
 #include "AudioOutputI2SNoDAC.h"
 
 #include <ESP8266mDNS.h>
@@ -62,7 +62,7 @@ void setup()
     Serial.println(message_decoded);
     Serial.println(message);
     
-    ESP8266SAM *sam = new ESP8266SAM;
+    ESP8266SAM_ES *sam = new ESP8266SAM_ES;
     sam->Say(out, message);
     delete sam;    
     server.send(200, "text/plain", "OK");
@@ -83,9 +83,9 @@ void ssdp() {
   SSDP.setDeviceType("upnp: rootdevice");
   SSDP.setSerialNumber("000000000001");
   SSDP.setURL("/say/connected");
-  SSDP.setModelName("ESP8266SAM");
+  SSDP.setModelName("ESP8266SAM_ES");
   SSDP.setModelNumber("0000000000001");
-  SSDP.setModelURL("https://github.com/earlephilhower/ESP8266SAM");
+  SSDP.setModelURL("https://github.com/pablomarquez76/ESP8266SAM_ES");
   SSDP.setManufacturer("earlephilhower");
   SSDP.setManufacturerURL("https://github.com/earlephilhower/");
   SSDP.begin();
