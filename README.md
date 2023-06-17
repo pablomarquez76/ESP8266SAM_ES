@@ -35,13 +35,9 @@ When compiling the library using Arduino 2.0 or later a conflict with SD library
 
 C:\Users\<yourUser>\AppData\Local\Arduino15\packages\esp32\hardware\esp32\1.0.6\libraries\SD\library.properties
 
-from this:
+from this: name=SD(esp32)
 
-name=SD(esp32)
-
-to this:
-
-name=SD
+to this: name=SD
 
 ## License
 While the ESP8266 wrapper is my own, the SAM software is a reverse-engineered version of a software published more than 34 years ago by "Don't ask Software".
