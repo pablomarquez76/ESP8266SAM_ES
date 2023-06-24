@@ -1,5 +1,5 @@
 # ESP8266SAM_ES
-Speech synthesis for ESP8266 and ESP-32 using ported SAM code in Spanish
+Speech synthesis for ESP8266 and ESP32 using ported SAM code in Spanish.
 
 The code was modified from https://github.com/earlephilhower/ESP8266SAM
 
