@@ -6,7 +6,7 @@ AudioOutputI2SNoDAC *out = NULL;
 
 void setup()
 {
-  out = new AudioOutputI2SNoDAC();
+  out = new AudioOutputI2SNoDAC(); // for ESP8266 use pin GPIO03(RX) but for ESP32 use pin GPIO22
   out->begin();
 }
 
