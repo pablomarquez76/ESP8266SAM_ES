@@ -20,7 +20,7 @@ void setup() {
 void loop() {
   if (Serial.available() > 0) {
     char cr;
-    if (pos < 21) { // Reads only numbers with 21 characters
+    if (pos < 21) {  // Reads only numbers with 21 characters
       cr = (char)Serial.read();
     } else {
       cr = '\n';
@@ -30,28 +30,38 @@ void loop() {
       linea[pos++] = 0;
       Serial.print(linea);
       Serial.print(">");
-      if (pos == 1) val = random(0, 2147483647); // Says random number integer if press "Enter" alone
+      if (pos == 1) val = random(0, 2147483647);  // Says random number integer if press "Enter" alone
       else val = atoi(linea);
       Serial.print(val);
-      decirNumero(val); // Says integer part
-      int punt_linea = -1;
-      for (int i = 0; i < pos; i++)
-        if (linea[i] == '.' || linea[i] == ',') punt_linea = i; // Find decimal separator (by country "," or ".")
-      if (punt_linea > -1) {
-        ESP8266SAM_ES *sam = new ESP8266SAM_ES;
-        if (linea[punt_linea] == ',') {
-          Serial.print(",");
-          sam->Say(out, "coma");
-        } else {
-          Serial.print(".");
-          sam->Say(out, "punto");
+      decirNumero(val);  // Says integer part
+      int punt_linea;
+      while (punt_linea > -1) {
+        punt_linea = -1;
+        for (int i = 0; i < pos; i++) {
+          if (linea[i] == '.' || linea[i] == ',' || linea[i] == 'e') {  // Find decimal separator (by country "," or ".")
+            punt_linea = i;
+            break;
+          }
         }
-        delete sam;
-        for (int i = 0; i < pos - punt_linea; i++)
-          linea[i] = linea[i + punt_linea + 1];
-        val = atoi(linea);
-        Serial.print(val);
-        decirNumero(val); // Says decimal part
+        if (punt_linea > -1) {
+          ESP8266SAM_ES *sam = new ESP8266SAM_ES;
+          if (linea[punt_linea] == ',') {
+            Serial.print(",");
+            sam->Say(out, " coma ");
+          } else if (linea[punt_linea] == '.') {
+            Serial.print(".");
+            sam->Say(out, " punto ");
+          } else {
+            Serial.print(".10^");
+            sam->Say(out, " por diez a la ");
+          }
+          delete sam;
+          for (int i = 0; i < pos - punt_linea; i++)
+            linea[i] = linea[i + punt_linea + 1];
+          val = atoi(linea);
+          Serial.print(val);
+          decirNumero(val);  // Says decimal part
+        }
       }
       Serial.println();
       pos = 0;
