@@ -95,7 +95,7 @@ void ESP8266SAM_ES::SetVoice(enum SAMVoice voice)
   switch (voice) {
     case VOICE_ELF: SetSpeed(72); SetPitch(64); SetThroat(110); SetMouth(160); break;
     case VOICE_ROBOT: SetSpeed(92); SetPitch(60); SetThroat(190); SetMouth(190); break;
-    case VOICE_STUFFY: SetSpeed(82); SetPitch(72); SetThroat(110); SetMouth(105); break;
+    case VOICE_STUFFY: SetSpeed(60); SetPitch(190); SetThroat(105); SetMouth(100); break;
     case VOICE_OLDLADY: SetSpeed(82); SetPitch(32); SetThroat(145); SetMouth(145); break;
     case VOICE_ET: SetSpeed(100); SetPitch(64); SetThroat(150); SetMouth(200); break;
     default:
