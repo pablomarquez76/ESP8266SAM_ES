@@ -3,7 +3,7 @@ Speech synthesis for ESP8266 and ESP32 using ported SAM code in Spanish.
 
 The code was modified from https://github.com/earlephilhower/ESP8266SAM
 
-This is a port, wrapper, and update of the reverse-engineered speech synthesizer Software Automatic Mouth (SAM).  Utilize it with the [ESP8266Audio library](https://github.com/earlephilhower/ESP8266Audio/) to have your ESP speak via a DAC or a direct-drive speaker.  No web services are required, everything from text parsing to speech generation is done directly on the ESP.
+This is a port, wrapper, and update of the reverse-engineered speech synthesizer Software Automatic Mouth (SAM).  Utilize it with the [ESP8266Audio library](https://github.com/earlephilhower/ESP8266Audio/) to have your ESP speak via a DAC or a direct-drive speaker. To make it compatible with ESP32 v3.0.0 boards part of the ESP8266Audio library was included. No web services are required, everything from text parsing to speech generation is done directly on the ESP.
 
 [Original sources](https://github.com/s-macke/SAM)
 
