@@ -33,13 +33,11 @@ void ESP8266SAM_ES::OutputByteCallback(void *cbdata, unsigned char b) {
 }
 
 void ESP8266SAM_ES::OutputByte(unsigned char b) {
-  // Xvert unsigned 8 to signed 16...
-  int16_t s16 = b;
-  s16 -= 128;
-  s16 *= 128;
+  // Upsample from unsigned 8 bits to signed 16 bits
   int16_t sample[2];
-  sample[0] = s16;
-  sample[1] = s16;
+  sample[0] = b;
+  sample[0] = (((int16_t)(sample[0] & 0xff)) - 128) << 8;
+  sample[1] = sample[0];
   while (!output->ConsumeSample(sample)) yield();
 }
 
