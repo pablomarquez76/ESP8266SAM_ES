@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include <ESP8266SAM_ES.h>
-#include <AudioOutputI2S.h>
+#include <AudioOutputInternalDAC.h>
 
-AudioOutputI2S *out = NULL;
+AudioOutputInternalDAC *out = NULL;
 
 char linea[60];
 int pos = 0;
@@ -10,7 +10,7 @@ int punt_linea = 0;
 
 void setup() {
   Serial.begin(115200);
-  out = new AudioOutputI2S(0, 1);  // to use the internal DAC channel 1 (pin25) on ESP32
+  out = new AudioOutputInternalDAC();  // ESP32 pin 25
   out->begin();
 }
 

@@ -1,12 +1,12 @@
 #include <Arduino.h>
 #include <ESP8266SAM_ES.h>
-#include <AudioOutputI2S.h>
+#include <AudioOutputInternalDAC.h>
 
-AudioOutputI2S *out = NULL;
+AudioOutputInternalDAC *out = NULL;
 
 void setup()
 {
-  out = new AudioOutputI2S();
+  out = new AudioOutputInternalDAC(); // ESP32 pin 25
   out->begin();
 }
 

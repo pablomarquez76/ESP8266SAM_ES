@@ -1,19 +1,19 @@
 #include <Arduino.h>
 #include <ESP8266SAM_ES.h>
-#include "AudioOutputI2SNoDAC.h"
+#include <AudioOutputInternalDAC.h>
 #define MAX_LONG 20
 #define MILLON 1000000
 #define MIL 1000
 #define CIEN 100
 #define DIEZ 10
-AudioOutputI2SNoDAC *out = NULL;
+AudioOutputInternalDAC *out = NULL;
 char linea[60];
 int pos = 0;
 String numero;
 // Initial setup
 void setup() {
   Serial.begin(115200);
-  out = new AudioOutputI2SNoDAC();  // with ESP8266 use pin GPIO03(RX) but with ESP32 use pin GPIO22
+  out = new AudioOutputInternalDAC();  // ESP32 pin 25
   out->begin();
 }
 // Main loop
