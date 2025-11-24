@@ -5,24 +5,21 @@
 extern "C" {
 #endif
 
-void SetInput(char *_input);
-void SetSpeed(unsigned char _speed);
-void SetPitch(unsigned char _pitch);
-void SetMouth(unsigned char _mouth);
-void SetThroat(unsigned char _throat);
-void EnableSingmode(int x);
+  void SetInput(char *_input);
+  void SetSpeed(unsigned char _speed);
+  void SetPitch(unsigned char _pitch);
+  void SetMouth(unsigned char _mouth);
+  void SetThroat(unsigned char _throat);
+  void EnableSingmode(int x);
 
-int SAMMain( void (*cb)(void *, unsigned char), void *cbdata );
+  int SAMMain(void (*cb)(void *, unsigned char), void *cbdata);
 
-int GetBufferLength();
+  int GetBufferLength();
 
-int SAMPrepare();
-
-
+  int SAMPrepare();
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

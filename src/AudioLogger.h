@@ -1,13 +1,13 @@
-
 #include <Arduino.h>
 
 #ifndef _AUDIOLOGGER_H
 #define _AUDIOLOGGER_H
 
-class DevNullOut: public Print
-{
+class DevNullOut : public Print {
 public:
-    virtual size_t write(uint8_t) { return 1; }
+  virtual size_t write(uint8_t) {
+    return 1;
+  }
 };
 
 extern DevNullOut silencedLogger;

@@ -17,8 +17,6 @@
   
   added: Regional accents
 */
-
-
 #include <Arduino.h>
 #include <ESP8266SAM_ES.h>
 
@@ -26,38 +24,35 @@
 #include "sam.h"
 #include "SamData.h"
 
-SamData* samdata;
+SamData *samdata;
 
 // Thunk from C to C++ with a this-> pointer
-void ESP8266SAM_ES::OutputByteCallback(void *cbdata, unsigned char b)
-{
-  ESP8266SAM_ES *sam = static_cast<ESP8266SAM_ES*>(cbdata);
+void ESP8266SAM_ES::OutputByteCallback(void *cbdata, unsigned char b) {
+  ESP8266SAM_ES *sam = static_cast<ESP8266SAM_ES *>(cbdata);
   sam->OutputByte(b);
 }
 
-void ESP8266SAM_ES::OutputByte(unsigned char b)
-{
+void ESP8266SAM_ES::OutputByte(unsigned char b) {
   // Xvert unsigned 8 to signed 16...
-  int16_t s16 = b;// s16 -= 128; //s16 *= 128;
+  int16_t s16 = b;
+  s16 -= 128;
+  s16 *= 128;
   int16_t sample[2];
   sample[0] = s16;
   sample[1] = s16;
   while (!output->ConsumeSample(sample)) yield();
 }
 
-bool ESP8266SAM_ES::Say(AudioOutput *out, const char *str)
-{
-  if (!str || strlen(str) > 254) return false; // Only can speak up to 1 page worth of data...
+bool ESP8266SAM_ES::Say(AudioOutput *out, const char *str) {
+  if (!str || strlen(str) > 254) return false;  // Only can speak up to 1 page worth of data...
   samdata = new SamData;
-  if (samdata == nullptr)
-  {
+  if (samdata == nullptr) {
     // allocation failed!
     return false;
   }
 
   // These are fixed by the synthesis routines
   out->SetRate(22050);
-  out->SetBitsPerSample(8);
   out->SetChannels(1);
   out->begin();
 
@@ -85,26 +80,54 @@ bool ESP8266SAM_ES::Say(AudioOutput *out, const char *str)
   // Say it!
   output = out;
   SetInput(input);
-  SAMMain(OutputByteCallback, (void*)this);
+  SAMMain(OutputByteCallback, (void *)this);
   delete samdata;
   return true;
 }
 
-void ESP8266SAM_ES::SetVoice(enum SAMVoice voice)
-{
+void ESP8266SAM_ES::SetVoice(enum SAMVoice voice) {
   switch (voice) {
-    case VOICE_ELF: SetSpeed(72); SetPitch(64); SetThroat(110); SetMouth(160); break;
-    case VOICE_ROBOT: SetSpeed(92); SetPitch(60); SetThroat(190); SetMouth(190); break;
-    case VOICE_STUFFY: SetSpeed(60); SetPitch(190); SetThroat(105); SetMouth(100); break;
-    case VOICE_OLDLADY: SetSpeed(82); SetPitch(32); SetThroat(145); SetMouth(145); break;
-    case VOICE_ET: SetSpeed(100); SetPitch(64); SetThroat(150); SetMouth(200); break;
+    case VOICE_ELF:
+      SetSpeed(72);
+      SetPitch(64);
+      SetThroat(110);
+      SetMouth(160);
+      break;
+    case VOICE_ROBOT:
+      SetSpeed(92);
+      SetPitch(60);
+      SetThroat(190);
+      SetMouth(190);
+      break;
+    case VOICE_STUFFY:
+      SetSpeed(60);
+      SetPitch(190);
+      SetThroat(105);
+      SetMouth(100);
+      break;
+    case VOICE_OLDLADY:
+      SetSpeed(82);
+      SetPitch(32);
+      SetThroat(145);
+      SetMouth(145);
+      break;
+    case VOICE_ET:
+      SetSpeed(100);
+      SetPitch(64);
+      SetThroat(150);
+      SetMouth(200);
+      break;
     default:
-    case VOICE_SAM: SetSpeed(72); SetPitch(64); SetThroat(128); SetMouth(128); break;
+    case VOICE_SAM:
+      SetSpeed(72);
+      SetPitch(64);
+      SetThroat(128);
+      SetMouth(128);
+      break;
   }
 }
 
-void ESP8266SAM_ES::SetRegion(enum SAMRegion region)
-{
+void ESP8266SAM_ES::SetRegion(enum SAMRegion region) {
   switch (region) {
     case REGION_AR: regionN = 0; break;
     case REGION_ES: regionN = 1; break;

@@ -17,7 +17,6 @@
   
   added: Regional accents
 */
-
 #ifndef _ESP8266SAM_ES_H
 #define _ESP8266SAM_ES_H
 
@@ -27,8 +26,7 @@
 class ESP8266SAM_ES {
 
 public:
-  ESP8266SAM_ES()
-  {
+  ESP8266SAM_ES() {
     singmode = false;
     phonetic = false;
     pitch = 0;
@@ -37,22 +35,40 @@ public:
     speed = 0;
     output = NULL;
   };
-  
-  ~ESP8266SAM_ES()
-  {
+
+  ~ESP8266SAM_ES() {
   }
 
-  enum SAMVoice { VOICE_SAM, VOICE_ELF, VOICE_ROBOT, VOICE_STUFFY, VOICE_OLDLADY, VOICE_ET };
-  enum SAMRegion { REGION_AR, REGION_ES, REGION_OT };
+  enum SAMVoice { VOICE_SAM,
+                  VOICE_ELF,
+                  VOICE_ROBOT,
+                  VOICE_STUFFY,
+                  VOICE_OLDLADY,
+                  VOICE_ET };
+  enum SAMRegion { REGION_AR,
+                   REGION_ES,
+                   REGION_OT };
   void SetVoice(enum SAMVoice voice);
   void SetRegion(enum SAMRegion region);
 
-  void SetSingMode(bool val) { singmode = val; }
-  void SetPhonetic(bool val) { phonetic = val; }
-  void SetPitch(uint8_t val) { pitch = val; }
-  void SetMouth(uint8_t val) { mouth = val; }
-  void SetThroat(uint8_t val) { throat = val; }
-  void SetSpeed(uint8_t val) { speed = val; }
+  void SetSingMode(bool val) {
+    singmode = val;
+  }
+  void SetPhonetic(bool val) {
+    phonetic = val;
+  }
+  void SetPitch(uint8_t val) {
+    pitch = val;
+  }
+  void SetMouth(uint8_t val) {
+    mouth = val;
+  }
+  void SetThroat(uint8_t val) {
+    throat = val;
+  }
+  void SetSpeed(uint8_t val) {
+    speed = val;
+  }
 
   bool Say(AudioOutput *out, const char *str);
 
@@ -67,5 +83,4 @@ private:
   int throat;
   AudioOutput *output;
 };
-
 #endif

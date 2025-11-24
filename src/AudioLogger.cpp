@@ -1,4 +1,3 @@
-
 #include "AudioLogger.h"
 
 DevNullOut silencedLogger;

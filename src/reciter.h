@@ -14,36 +14,23 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 #define MAX_LONG 20
-byte regionN = 0; // regionN: 0 AR (Argentina y Uruguay)  1 ES (España) 2 OT (Otros)
+byte regionN = 0;  // regionN: 0 AR (Argentina y Uruguay)  1 ES (España) 2 OT (Otros)
 
 boolean esVocal(char cr) {
-  if (cr == 'A' ||
-      cr == 'E' ||
-      cr == 'I' ||
-      cr == 'O' ||
-      cr == 'U')
+  if (cr == 'A' || cr == 'E' || cr == 'I' || cr == 'O' || cr == 'U')
     return true;
   return false;
 }
 
 boolean esVocalFuerte(char cr) {
-  if (cr == 'A' ||
-      cr == 'E' ||
-      cr == 'O')
+  if (cr == 'A' || cr == 'E' || cr == 'O')
     return true;
   return false;
 }
 
 boolean esPuntuacion(char cr) {
-  if (cr == ' ' ||
-      cr == '-' ||
-      cr == ',' ||
-      cr == ';' ||
-      cr == '.' ||
-      cr == '?' ||
-      cr == '!')
+  if (cr == ' ' || cr == '-' || cr == ',' || cr == ';' || cr == '.' || cr == '?' || cr == '!')
     return true;
   return false;
 }
@@ -52,11 +39,11 @@ boolean tieneTilde(char* palabra, int len) {
   for (int ind = 0; ind < len; ind++) {
     if (palabra[ind] == 195) {
       char c2 = palabra[ind + 1];
-      if (c2 == 161 || c2 == 129 ||   // Á
-          c2 == 169 || c2 == 137 ||   // É
-          c2 == 173 || c2 == 141 ||   // Í
-          c2 == 179 || c2 == 147 ||   // Ó
-          c2 == 186 || c2 == 154) {   // Ú
+      if (c2 == 161 || c2 == 129 ||  // Á
+          c2 == 169 || c2 == 137 ||  // É
+          c2 == 173 || c2 == 141 ||  // Í
+          c2 == 179 || c2 == 147 ||  // Ó
+          c2 == 186 || c2 == 154) {  // Ú
         return true;
       }
     }
@@ -66,16 +53,14 @@ boolean tieneTilde(char* palabra, int len) {
 
 boolean terminaNSVocal(char* palabra, int len) {
   char cr = palabra[len - 1];
-  if (cr == 'N' ||
-      cr == 'S' ||
-      esVocal(cr))
+  if (cr == 'N' || cr == 'S' || esVocal(cr))
     return true;
   return false;
 }
 
 boolean tildeEI(char cr) {
-  if (cr == 169 || cr == 137 || // É
-      cr == 173 || cr == 141)   // Í
+  if (cr == 169 || cr == 137 ||  // É
+      cr == 173 || cr == 141)    // Í
     return true;
   return false;
 }
@@ -129,8 +114,7 @@ void textoAFonemas(char* txt, char* fonema) {
 
     if (esPuntuacion(cr)) {
       punt = true;
-    }
-    else if (punt) {
+    } else if (punt) {
       int ind = 0;
       while (ind < MAX_LONG) {
         char car = txt[ind_txt + ind];
@@ -139,16 +123,15 @@ void textoAFonemas(char* txt, char* fonema) {
           strncpy(palabra, txt + ind_txt, ind);
           ind_acento = ind_txt + indiceAcento(palabra, ind);
           break;
-        }
-        else ind++;
+        } else ind++;
       }
       punt = false;
     }
 
     switch (cr) {
 
-      // orden: _, E, A, O, S, R, N, I, D, L, C, T, U, M, P, B,
-      //        ., ,, G, V, Y, Q, H, F, Z, J, Ñ, X, K, W.
+        // orden: _, E, A, O, S, R, N, I, D, L, C, T, U, M, P, B,
+        //        ., ,, G, V, Y, Q, H, F, Z, J, Ñ, X, K, W.
 
       case ' ':
         fonema[ind_fon++] = cr;
@@ -206,12 +189,12 @@ void textoAFonemas(char* txt, char* fonema) {
         break;
 
       case 'L':
-        if (c1 == 'L' ) {
+        if (c1 == 'L') {
           if (regionN == 0) {
-            fonema[ind_fon++] = 'S'; // argentina
-            fonema[ind_fon++] = 'H'; // argentina
+            fonema[ind_fon++] = 'S';  // argentina
+            fonema[ind_fon++] = 'H';  // argentina
           } else {
-            fonema[ind_fon++] = 'Y'; // otros
+            fonema[ind_fon++] = 'Y';  // otros
           }
           ind_txt++;
         } else if (c1 == 'R') {
@@ -223,14 +206,12 @@ void textoAFonemas(char* txt, char* fonema) {
         break;
 
       case 'C':
-        if (c1 == 'E' ||
-            c1 == 'I' ||
-            (c1 == 195 && tildeEI(c2))) {
+        if (c1 == 'E' || c1 == 'I' || (c1 == 195 && tildeEI(c2))) {
           if (regionN == 1) {
-            fonema[ind_fon++] = 'T'; // españa
-            fonema[ind_fon++] = 'H'; // españa
+            fonema[ind_fon++] = 'T';  // españa
+            fonema[ind_fon++] = 'H';  // españa
           } else {
-            fonema[ind_fon++] = 'S'; // otros
+            fonema[ind_fon++] = 'S';  // otros
           }
         } else if (c1 == 'H') {
           fonema[ind_fon++] = 'C';
@@ -271,17 +252,13 @@ void textoAFonemas(char* txt, char* fonema) {
         break;
 
       case 'G':
-        if (c1 == 'E' || c1 == 'I' ||
-            (c1 == 195 && tildeEI(c2))) {
+        if (c1 == 'E' || c1 == 'I' || (c1 == 195 && tildeEI(c2))) {
           fonema[ind_fon++] = '/';
           fonema[ind_fon++] = 'H';
-        } else if (c1 == 'U' &&
-                   (c2 == 'E' ||
-                    c2 == 'I' ||
-                    (c2 == 195 && tildeEI(c3)))) {
+        } else if (c1 == 'U' && (c2 == 'E' || c2 == 'I' || (c2 == 195 && tildeEI(c3)))) {
           fonema[ind_fon++] = 'G';
           ind_txt++;
-        }  else {
+        } else {
           fonema[ind_fon++] = 'G';
         }
         break;
@@ -293,10 +270,10 @@ void textoAFonemas(char* txt, char* fonema) {
       case 'Y':
         if (esVocal(c1)) {
           if (regionN == 0) {
-            fonema[ind_fon++] = 'S'; // argentina
-            fonema[ind_fon++] = 'H'; // argentina
+            fonema[ind_fon++] = 'S';  // argentina
+            fonema[ind_fon++] = 'H';  // argentina
           } else {
-            fonema[ind_fon++] = 'Y'; // otros
+            fonema[ind_fon++] = 'Y';  // otros
           }
         } else {
           fonema[ind_fon++] = 'I';
@@ -306,12 +283,10 @@ void textoAFonemas(char* txt, char* fonema) {
 
       case 'Q':
         if (c1 == 'U'
-            && (c2 == 'E' ||
-                c2 == 'I' ||
-                (c2 == 195 && tildeEI(c3)))) {
+            && (c2 == 'E' || c2 == 'I' || (c2 == 195 && tildeEI(c3)))) {
           fonema[ind_fon++] = 'K';
           ind_txt++;
-        }  else {
+        } else {
           fonema[ind_fon++] = 'K';
         }
         break;
@@ -325,10 +300,10 @@ void textoAFonemas(char* txt, char* fonema) {
 
       case 'Z':
         if (regionN == 1) {
-          fonema[ind_fon++] = 'T'; // españa
-          fonema[ind_fon++] = 'H'; // españa
+          fonema[ind_fon++] = 'T';  // españa
+          fonema[ind_fon++] = 'H';  // españa
         } else {
-          fonema[ind_fon++] = 'S'; // otros
+          fonema[ind_fon++] = 'S';  // otros
         }
         break;
 
@@ -338,31 +313,31 @@ void textoAFonemas(char* txt, char* fonema) {
         break;
 
       case 195:
-        if (c1 == 177 || c1 == 145) {        // Ñ
+        if (c1 == 177 || c1 == 145) {  // Ñ
           fonema[ind_fon++] = 'N';
           fonema[ind_fon++] = 'I';
           fonema[ind_fon++] = 'Y';
-        } else if (c1 == 161 || c1 == 129) { // Á
+        } else if (c1 == 161 || c1 == 129) {  // Á
           fonema[ind_fon++] = 'A';
           fonema[ind_fon++] = 'A';
           fonema[ind_fon++] = '4';
-        } else if (c1 == 169 || c1 == 137) { // É
+        } else if (c1 == 169 || c1 == 137) {  // É
           fonema[ind_fon++] = 'E';
           fonema[ind_fon++] = 'H';
           fonema[ind_fon++] = '4';
-        } else if (c1 == 173 || c1 == 141) { // Í
+        } else if (c1 == 173 || c1 == 141) {  // Í
           fonema[ind_fon++] = 'I';
           fonema[ind_fon++] = 'Y';
           fonema[ind_fon++] = '4';
-        } else if (c1 == 179 || c1 == 147) { // Ó
+        } else if (c1 == 179 || c1 == 147) {  // Ó
           fonema[ind_fon++] = 'O';
           fonema[ind_fon++] = 'H';
           fonema[ind_fon++] = '4';
-        } else if (c1 == 186 || c1 == 154) { // Ú
+        } else if (c1 == 186 || c1 == 154) {  // Ú
           fonema[ind_fon++] = 'U';
           fonema[ind_fon++] = 'W';
           fonema[ind_fon++] = '4';
-        } else if (c1 == 188 || c1 == 156) { // Ü
+        } else if (c1 == 188 || c1 == 156) {  // Ü
           fonema[ind_fon++] = 'U';
           fonema[ind_fon++] = 'W';
         }
@@ -399,10 +374,10 @@ void textoAFonemas(char* txt, char* fonema) {
 
       case '0':
         if (regionN == 1) {
-          fonema[ind_fon++] = 'T'; // españa
-          fonema[ind_fon++] = 'H'; // españa
+          fonema[ind_fon++] = 'T';  // españa
+          fonema[ind_fon++] = 'H';  // españa
         } else {
-          fonema[ind_fon++] = 'S'; // otros
+          fonema[ind_fon++] = 'S';  // otros
         }
         fonema[ind_fon++] = 'E';
         fonema[ind_fon++] = 'H';
@@ -461,10 +436,10 @@ void textoAFonemas(char* txt, char* fonema) {
 
       case '5':
         if (regionN == 1) {
-          fonema[ind_fon++] = 'T'; // españa
-          fonema[ind_fon++] = 'H'; // españa
+          fonema[ind_fon++] = 'T';  // españa
+          fonema[ind_fon++] = 'H';  // españa
         } else {
-          fonema[ind_fon++] = 'S'; // otros
+          fonema[ind_fon++] = 'S';  // otros
         }
         fonema[ind_fon++] = 'I';
         fonema[ind_fon++] = 'Y';
