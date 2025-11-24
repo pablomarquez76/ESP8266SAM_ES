@@ -1,191 +1,158 @@
-#include <Arduino.h>
-#include <ESP8266SAM_ES.h>
-#include <AudioOutputInternalDAC.h>
-#define MAX_LONG 20
-#define MILLON 1000000
-#define MIL 1000
-#define CIEN 100
-#define DIEZ 10
-AudioOutputInternalDAC *out = NULL;
-char linea[60];
-int pos = 0;
-String numero;
-// Initial setup
-void setup() {
-  Serial.begin(115200);
-  out = new AudioOutputInternalDAC();  // ESP32 pin 25
-  out->begin();
-}
-// Main loop
-void loop() {
-  if (Serial.available() > 0) {
-    char cr;
-    if (pos < 21) {  // Reads only numbers with 21 characters
-      cr = (char)Serial.read();
-    } else {
-      cr = '\n';
+#pragma once
+#if defined(ESP32) && SOC_DAC_SUPPORTED
+#include "AudioOutput.h"
+#include <driver/dac_continuous.h>
+
+class AudioOutputInternalDAC : public AudioOutput {
+  const int buffer_sz;
+  std::vector<uint8_t> buffer;
+  dac_continuous_handle_t dac_handle = nullptr;
+
+  void dac_init() {
+    ESP_LOGI("dac_init", "bps=%d, ch=%d, freq=%d", 16, channels, hertz);
+
+    if (dac_handle) {
+      dac_continuous_disable(dac_handle);
+      dac_continuous_del_channels(dac_handle);
     }
-    if (cr == '\n') {
-      long val;  // range -2,147,483,648 to 2,147,483,647
-      linea[pos++] = 0;
-      Serial.print(linea);
-      Serial.print(">");
-      if (pos == 1) val = random(0, 2147483647);  // Says random number integer if press "Enter" alone
-      else val = atoi(linea);
-      Serial.print(val);
-      decirNumero(val);  // Says integer part
-      int punt_linea;
-      while (punt_linea > -1) {
-        punt_linea = -1;
-        for (int i = 0; i < pos; i++) {
-          if (linea[i] == '.' || linea[i] == ',' || linea[i] == 'e') {  // Find decimal separator (by country "," or ".")
-            punt_linea = i;
-            break;
-          }
-        }
-        if (punt_linea > -1) {
-          ESP8266SAM_ES *sam = new ESP8266SAM_ES;
-          if (linea[punt_linea] == ',') {
-            Serial.print(",");
-            sam->Say(out, " coma ");
-          } else if (linea[punt_linea] == '.') {
-            Serial.print(".");
-            sam->Say(out, " punto ");
-          } else {
-            Serial.print(".10^");
-            sam->Say(out, " por diez a la ");
-          }
-          delete sam;
-          for (int i = 0; i < pos - punt_linea; i++)
-            linea[i] = linea[i + punt_linea + 1];
-          val = atoi(linea);
-          Serial.print(val);
-          decirNumero(val);  // Says decimal part
-        }
+
+    dac_continuous_config_t dac_config = {
+      .chan_mask = channels == 2 ? DAC_CHANNEL_MASK_ALL : DAC_CHANNEL_MASK_CH0,
+      .desc_num = 2,  // we dont need more
+      .buf_size = (size_t)buffer_sz,
+      .freq_hz = hertz,
+      .offset = 0,
+      .clk_src = DAC_DIGI_CLK_SRC_APLL,
+      .chan_mode = channels == 2 ? DAC_CHANNEL_MODE_ALTER : DAC_CHANNEL_MODE_SIMUL,
+    };
+
+    dac_continuous_new_channels(&dac_config, &dac_handle);
+    dac_continuous_enable(dac_handle);
+  }
+
+  void dac_deinit() {
+    if (dac_handle) {
+      dac_continuous_disable(dac_handle);
+      dac_continuous_del_channels(dac_handle);
+      dac_handle = nullptr;
+    }
+
+    // prevent frying of your audio amplifier
+    // dac pins like to go high after deinit
+
+#if defined(CONFIG_IDF_TARGET_ESP32)
+    int dac_1_gpio = 25, dac_2_gpio = 26;
+#elif defined(CONFIG_IDF_TARGET_ESP32S2)
+    int dac_1_gpio = 17, dac_2_gpio = 18;
+#else
+    static_assert(0, "AudioOutputInternalDAC: Unsupported Target " CONFIG_IDF_TARGET);
+#endif
+
+    pinMode(dac_1_gpio, OUTPUT);
+    digitalWrite(dac_1_gpio, LOW);
+
+    if (channels == 2) {
+      pinMode(dac_2_gpio, OUTPUT);
+      digitalWrite(dac_2_gpio, LOW);
+    }
+  }
+
+  void dac_write(uint8_t* samples, uint16_t count) {
+    if (buffer.size() + count >= buffer_sz) {
+      size_t needed = buffer_sz - buffer.size();
+      buffer.insert(buffer.end(), samples, samples + needed);
+      samples += needed;
+      count -= needed;
+
+      dac_continuous_write(dac_handle, buffer.data(), buffer_sz, NULL, -1);
+      buffer.clear();
+
+      while (count >= buffer_sz) {
+        dac_continuous_write(dac_handle, samples, buffer_sz, NULL, -1);
+        samples += buffer_sz;
+        count -= buffer_sz;
       }
-      Serial.println();
-      pos = 0;
-    } else {
-      linea[pos++] = cr;
+    }
+
+    if (count) {
+      buffer.insert(buffer.end(), samples, samples + count);
     }
   }
-}
-// Says number
-void decirNumero(long val) {
-  if (val < 0) {
-    val = -val;
-    numero = "menos ";
-  } else
-    numero = "";
-  numATexto(val);
-  char texto[60];
-  String num;
-  int inicio = 0, punt_linea = 0;
-  ESP8266SAM_ES *sam = new ESP8266SAM_ES;
-  while (numero.length() - inicio > 60) {
-    for (int i = inicio; i < inicio + 60; i++)
-      if (numero[i] == ' ') punt_linea = i;
-    num = numero.substring(inicio, punt_linea);
-    num.toCharArray(texto, 60);
-    sam->Say(out, texto);
-    inicio = punt_linea + 1;
+
+public:
+  // buffer_size should be in rannge [32, 4092]. large values can cause out
+  // of memory situation which can have side effects like wifi not working
+  AudioOutputInternalDAC(uint16_t buffer_size = 256)
+    : buffer_sz{ buffer_size } {
+    dac_deinit();  //sets the pins low until dac_init
   }
-  num = numero.substring(inicio);
-  num.toCharArray(texto, 60);
-  sam->Say(out, texto);
-  delete sam;
-}
-// Returns part of number string
-char *enLetrasAux(int indice1, int indice2) {
-  char *unidades[] = { "un", "dós", "trés", "cuatro", "cinco", "séis", "siete", "ocho", "nueve" };
-  char *dieces[] = { "once", "doce", "trece", "catorce", "quince", "dieciséis", "diecisiete", "dieciocho", "diecinueve" };
-  char *decenas[] = { "diez", "veint", "treinta", "cuarenta", "cincuenta", "sesenta", "setenta", "ochenta", "noventa" };
-  char *centenas[] = { "cien", "doscientos", "trescientos", "cuatrocientos", "quinientos", "seiscientos", "setecientos", "ochocientos", "novecientos" };
-  char *millares[] = { "mil", "millón" };
-  switch (indice2) {
-    case 0: return unidades[indice1];
-    case 1: return dieces[indice1];
-    case 2: return decenas[indice1];
-    case 3: return centenas[indice1];
+
+  ~AudioOutputInternalDAC() {
+    dac_deinit();
   }
-  return millares[indice1];
-}
-// Process thusands
-void millares(const int a_numerode, const int indice) {
-  if (indice == 0) {
-    numero += enLetrasAux(0, 4);
-  } else {
-    if (a_numerode > 1) {
-      numero += enLetrasAux(1, 4);
-      numero += "es";
-    } else {
-      numero += enLetrasAux(0, 0);
-      numero += " ";
-      numero += enLetrasAux(1, 4);
+
+  uint16_t ConsumeSamples(int16_t* samples, uint16_t count) override {
+    if (!dac_handle) {
+      dac_init();
     }
-  }
-  numero += " ";
-}
-// Process number
-void enLetras(const long a_numerode) {
-  if (a_numerode < 10) {
-    numero += enLetrasAux(a_numerode - 1, 0);
-  } else if (a_numerode > 10 && a_numerode < 20) {
-    numero += enLetrasAux(a_numerode % DIEZ - 1, 1);
-  } else if ((a_numerode % DIEZ) == 0 && a_numerode < CIEN) {
-    numero += enLetrasAux((a_numerode / DIEZ) - 1, 2);
-  } else if ((a_numerode % CIEN) == 0 && a_numerode < MIL) {
-    numero += enLetrasAux((a_numerode / CIEN) - 1, 3);
-    if (a_numerode == CIEN) numero += "to";
-    numero += " ";
-  } else if ((a_numerode % MIL) == 0 && a_numerode < MILLON) {
-    millares(a_numerode / MIL, 0);
-  } else if ((a_numerode % MILLON) == 0) {
-    millares(a_numerode / MILLON, 1);
-  }
-}
-// Finds residue to evaluate number
-void residuo(long *cantidad, const long valor) {
-  enLetras(*cantidad - (*cantidad % valor));
-  *cantidad = *cantidad % valor;
-}
-// Main number processing function (recursive)
-void numATextoAux(long a_cantidad) {
-  while (a_cantidad > 0) {
-    if (a_cantidad >= MILLON) {
-      if (a_cantidad / MILLON > 1) numATextoAux(a_cantidad / MILLON);  // --> recursive
-      residuo(&a_cantidad, MILLON);
-    } else if (a_cantidad >= MIL) {
-      if (a_cantidad / MIL > 1) numATextoAux(a_cantidad / MIL);  // --> recursive
-      residuo(&a_cantidad, MIL);
-    } else if (a_cantidad >= CIEN) {
-      residuo(&a_cantidad, CIEN);
-    } else if (a_cantidad > 29) {
-      residuo(&a_cantidad, DIEZ);
-      numero += " ";
-      if (a_cantidad > 0) numero += "y ";
-    } else if (a_cantidad > 20) {
-      residuo(&a_cantidad, DIEZ);
-      numero += "i";
-    } else if (a_cantidad == 20) {
-      residuo(&a_cantidad, DIEZ);
-      numero += "e ";
-    } else if (a_cantidad == DIEZ) {
-      residuo(&a_cantidad, DIEZ);
-      numero += " ";
-    } else {
-      residuo(&a_cantidad, a_cantidad);
-      numero += " ";
+    auto u8_samples = (uint8_t*)samples;
+
+    for (int i = 0; i < count; ++i) {
+      u8_samples[i] = (samples[i] + 32768) / 257;
     }
+
+    dac_write(u8_samples, count);
+    return count;
   }
-}
-// Main number to string function
-void numATexto(long a_cantidad) {
-  numATextoAux(a_cantidad);
-  if (a_cantidad == 0) {
-    numero = "zero";
-  } else if (a_cantidad % DIEZ == 1 && a_cantidad % CIEN != 11) {
-    numero = numero.substring(0, numero.length() - 1);
-    numero += "o";
+
+  bool ConsumeSample(int16_t samples[2]) {
+    if (!dac_handle) {
+      dac_init();
+    }
+    uint8_t u8_samples[2];
+
+    u8_samples[0] = (samples[0] + 32768) / 257;
+    u8_samples[1] = (samples[1] + 32768) / 257;
+
+    dac_write(u8_samples, channels);
+    return true;
   }
-}
+
+  bool begin() override {
+    //hertz = 22050;
+    return true;
+  }
+
+  void flush() override {
+    if (dac_handle) {
+      buffer.resize(buffer_sz);
+      buffer.back() = 0;  //ensure last sample is 0
+      dac_continuous_write(dac_handle, buffer.data(), buffer_sz, NULL, -1);
+    }
+    buffer.clear();
+  }
+
+  bool stop() override {
+    flush();
+    return true;
+  }
+
+  bool SetRate(int hz) override {
+    if (hertz != hz) {
+      hertz = hz;
+      flush();
+      dac_deinit();
+    }
+    return true;
+  }
+
+  bool SetChannels(int ch) override {
+    if (channels != ch) {
+      channels = ch;
+      flush();
+      dac_deinit();
+    }
+    return true;
+  }
+};
+#endif
