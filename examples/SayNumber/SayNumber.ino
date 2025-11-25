@@ -58,6 +58,7 @@ void loop() {
           delete sam;
           for (int i = 0; i < pos - punt_linea; i++)
             linea[i] = linea[i + punt_linea + 1];
+          pos = pos - punt_linea - 1;
           val = atoi(linea);
           Serial.print(val);
           decirNumero(val);  // Says decimal part
