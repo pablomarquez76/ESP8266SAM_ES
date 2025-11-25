@@ -20,7 +20,7 @@ void setup() {
 void loop() {
   if (Serial.available() > 0) {
     char cr;
-    if (pos < 21) {  // Reads only numbers with 21 characters
+    if (pos < 23) {  // Reads only numbers with 21 characters
       cr = (char)Serial.read();
     } else {
       cr = '\n';
