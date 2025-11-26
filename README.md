@@ -39,7 +39,7 @@ from this: name=SD(esp32)
 
 to this: name=SD
 
-### If you wish to use ESP8266Audio library to use the I2S, Audio files must be deleted from "src" folder in order to access all options of ESP8266Audio.
+### If you wish o access all options of ESP8266Audio library, audio library files from ESP8266SAM_ES must be deleted from "src" folder.
 
 ## License
 While the ESP8266 wrapper is my own, the SAM software is a reverse-engineered version of a software published more than 34 years ago by "Don't ask Software".
