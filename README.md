@@ -31,7 +31,7 @@ The pronunciation may be changed to match the spanish from Spain, Argentina or M
 Jan Derogee has used ESP8266SAM to build a complete VIC-20 compatible speech synthesis cartridge that works with BASIC applications.  It also has a great background on early speech synthesis and a neat construction and demo video.  Check it out at https://janderogee.com/projects/SerialSpeechSynthesisSAM/SerialSpeechSynthesisSAM.htm
 
 ## Troubleshoot
-# When compiling the library using Arduino 2.0 or later a conflict with SD library may show up. This may be solved by changing the value of variable "name" in file: 
+### When compiling the library using Arduino 2.0 or later a conflict with SD library may show up. This may be solved by changing the value of variable "name" in file: 
 
 C:\Users\<yourUser>\AppData\Local\Arduino15\packages\esp32\hardware\esp32\1.0.6\libraries\SD\library.properties
 
@@ -39,7 +39,7 @@ from this: name=SD(esp32)
 
 to this: name=SD
 
-# If you wish to use ESP8266Audio library to use the I2S, Audio files must be deleted from "src" folder in order to access all options of ESP8266Audio.
+### If you wish to use ESP8266Audio library to use the I2S, Audio files must be deleted from "src" folder in order to access all options of ESP8266Audio.
 
 ## License
 While the ESP8266 wrapper is my own, the SAM software is a reverse-engineered version of a software published more than 34 years ago by "Don't ask Software".
