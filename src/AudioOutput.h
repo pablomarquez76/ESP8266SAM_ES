@@ -21,7 +21,6 @@
 #define _AUDIOOUTPUT_H
 
 #include <Arduino.h>
-#include "AudioStatus.h"
 
 class AudioOutput {
 public:
