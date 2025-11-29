@@ -56,7 +56,7 @@ void enLetras(const long a_numerode) {
     millares(a_numerode / MILLON, 1);
   }
 }
-// Encuentra el residuo al ecaluar el numero
+// Encuentra el residuo al evaluar el numero
 void residuo(long *cantidad, const long valor) {
   enLetras(*cantidad - (*cantidad % valor));
   *cantidad = *cantidad % valor;
