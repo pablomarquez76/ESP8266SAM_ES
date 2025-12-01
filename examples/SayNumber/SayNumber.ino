@@ -5,9 +5,9 @@ void setup() {
   out = new AudioOutputInternalDAC();  // ESP32 pin 25
   out->begin();
   double D = 456285;
-  decirNumero(numACadena(D));
+  decirNumero(D);
   float F = 0.5265;
-  decirNumero(numACadena(F));
+  decirNumero(F);
   long L = -45000678;
   decirNumero(L);
 }
